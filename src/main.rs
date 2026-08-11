@@ -1,7 +1,8 @@
 //! bilivideo —— 网站视频嗅探+下载工具。
 //!
-//! 用法: `bvideo [OPTIONS] <URL...>`
-//!   输入 B站链接 / 视频直链 / 任意网页，自动识别类型并下载。
+//! 用法: `bvideo [OPTIONS] <URL_OR_TXT...>`
+//!   输入 B站链接 / 视频直链 / 任意网页，自动识别类型并下载；
+//!   也可传 txt 文件，自动提取其中所有 URL 批量处理。
 
 mod bili;
 mod cli;
@@ -18,6 +19,53 @@ use cli::Cli;
 use std::fs;
 use std::path::Path;
 
+use regex::Regex;
+use std::sync::OnceLock;
+
+/// 提取文本中所有 URL（支持整页复制、链接藏在任意文本中）。
+fn url_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new(r#"https?://[^\s<>"'，。；、]+"#).unwrap())
+}
+
+/// 判断参数是 URL 还是文件路径。
+fn is_url_like(s: &str) -> bool {
+    let t = s.trim();
+    t.starts_with("http://")
+        || t.starts_with("https://")
+        || t.starts_with("//")
+        || t.contains("://")
+        || t.contains("bilibili.com")
+        || t.contains("b23.tv")
+}
+
+/// 展开参数：URL 直接使用；txt 文件读取并提取其中所有 URL（整页复制也可）。
+fn collect_urls(args: &[String]) -> Result<Vec<String>> {
+    let mut out: Vec<String> = Vec::new();
+    for a in args {
+        let path = Path::new(a);
+        if path.is_file() {
+            let content = fs::read_to_string(path)
+                .with_context(|| format!("读取文件失败: {}", path.display()))?;
+            let urls: Vec<String> = url_re()
+                .captures_iter(&content)
+                .map(|c| c[0].to_string())
+                .collect();
+            if urls.is_empty() {
+                println!("未在 `{}` 中提取到任何 URL。", path.display());
+            } else {
+                println!("`{}` 中提取到 {} 条 URL。", path.display(), urls.len());
+            }
+            out.extend(urls);
+        } else if is_url_like(a) {
+            out.push(a.clone());
+        } else {
+            anyhow::bail!("参数既不是存在的文件也不是合法 URL: {a}");
+        }
+    }
+    Ok(out)
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     // 输出目录统一提前创建
@@ -28,7 +76,12 @@ fn main() -> Result<()> {
     fs::create_dir_all(&out_dir)
         .with_context(|| format!("创建输出目录失败: {}", out_dir.display()))?;
 
-    for url in &cli.urls {
+    let urls = collect_urls(&cli.urls)?;
+    if urls.is_empty() {
+        return Ok(());
+    }
+
+    for url in &urls {
         println!("{}", "-".repeat(60));
         if let Err(e) = route(&cli, &out_dir, url) {
             eprintln!("处理失败: {e:#}");

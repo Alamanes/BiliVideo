@@ -48,8 +48,10 @@ cargo build --release
 ## 用法
 
 ```
-bvideo [OPTIONS] <URL...>
+bvideo [OPTIONS] <URL_OR_TXT...>
 ```
+
+参数可以是 URL，也可以是 txt 文件路径（自动提取其中所有 URL 批量处理，支持整页复制）。
 
 ### 示例
 
@@ -89,8 +91,11 @@ bvideo -f mkv "https://example.com/live/playlist.m3u8"
 # 防盗链站点：自定义 UA / Cookie / Referer
 bvideo --referer "https://example.com" --cookie "session=xxx" "https://cdn.example.com/v.mp4"
 
-# 批量下载多个 URL
+# 批量下载多个 URL（直接传参即可）
 bvideo "https://.../a.mp4" "https://.../b.mp4" "https://www.bilibili.com/video/BVxxxx"
+
+# 链接很多时用 txt 文件批量（自动提取其中所有 URL）
+bvideo ./list.txt
 ```
 
 ### 全部参数
