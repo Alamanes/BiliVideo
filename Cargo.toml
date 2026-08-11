@@ -5,6 +5,10 @@ edition = "2021"
 authors = ["Shiorangerin <141531482+Shiorangerin@users.noreply.github.com>"]
 license = "MIT"
 description = "网站视频嗅探+下载工具 (Rust) —— B站专精 + 通用网页视频流提取，带进度条"
+homepage = "https://github.com/Shiorangerin/BiliVideo"
+repository = "https://github.com/Shiorangerin/BiliVideo"
+keywords = ["bilibili", "downloader", "video", "sniffer", "hls", "ffmpeg"]
+categories = ["command-line-utilities"]
 
 [[bin]]
 name = "bvideo"

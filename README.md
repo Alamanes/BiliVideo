@@ -9,19 +9,41 @@
 
 ## 安装
 
-```bash
-cd bilivideo
+### macOS / Linux（Homebrew）
+
+```sh
+brew tap orangerin/apps
+brew install bilivideo
+```
+
+公式来自 [`Shiorangerin/homebrew-apps`](https://github.com/Shiorangerin/homebrew-apps)，自动按架构选择 `aarch64` / `x86_64` 预编译二进制，秒装、无需本地编译。依赖系统 `ffmpeg`（公式已声明，缺时会自动装）。
+
+安装后即得全局命令 `bvideo`。
+
+### Windows
+
+从 [Releases](https://github.com/Shiorangerin/BiliVideo/releases) 下载 `bilivideo-x86_64-pc-windows-msvc.zip`，解压得到 `bvideo.exe`，放入任意 `PATH` 目录（推荐放进 `%USERPROFILE%\.cargo\bin` 或自建目录后加入环境变量）。
+
+需系统装有 `ffmpeg`：
+
+```powershell
+winget install Gyan.FFmpeg
+# 或
+scoop install ffmpeg
+```
+
+### 从源码构建
+
+需要 **Rust 1.70+** 与系统级 **ffmpeg**。
+
+```sh
+git clone https://github.com/Shiorangerin/BiliVideo.git
+cd BiliVideo
 cargo build --release
-# 产物: target/release/bvideo
-# 可将其软链/复制到 PATH，如:
-ln -s "$PWD/target/release/bvideo" /opt/homebrew/bin/bvideo
+# 产物：./target/release/bvideo
 ```
 
-依赖系统命令：**ffmpeg**（B站视频合并、HLS 合并必需；缺失时 HLS 退化为二进制拼接 ts）。macOS 安装：
-
-```bash
-brew install ffmpeg
-```
+把 `bvideo` 放进 `PATH` 即可全局调用。
 
 ## 用法
 
