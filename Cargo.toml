@@ -1,0 +1,32 @@
+[package]
+name = "bilivideo"
+version = "0.1.0"
+edition = "2021"
+authors = ["Shiorangerin <141531482+Shiorangerin@users.noreply.github.com>"]
+license = "MIT"
+description = "网站视频嗅探+下载工具 (Rust) —— B站专精 + 通用网页视频流提取，带进度条"
+
+[[bin]]
+name = "bvideo"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[dependencies]
+ureq = { version = "2.12", features = ["tls", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+clap = { version = "4", features = ["derive", "wrap_help"] }
+md-5 = "0.10"
+hex = "0.4"
+indicatif = "0.17"
+regex = "1"
+aes = "0.8"
+cbc = { version = "0.1", features = ["alloc"] }
+rayon = "1"
