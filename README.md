@@ -16,13 +16,13 @@ brew tap orangerin/apps
 brew install bilivideo
 ```
 
-公式来自 [`Shiorangerin/homebrew-apps`](https://github.com/Shiorangerin/homebrew-apps)，自动按架构选择 `aarch64` / `x86_64` 预编译二进制，秒装、无需本地编译。依赖系统 `ffmpeg`（公式已声明，缺时会自动装）。
+公式来自 [`Alamanes/homebrew-apps`](https://github.com/Alamanes/homebrew-apps)，自动按架构选择 `aarch64` / `x86_64` 预编译二进制，秒装、无需本地编译。依赖系统 `ffmpeg`（公式已声明，缺时会自动装）。
 
 安装后即得全局命令 `bvideo`。
 
 ### Windows
 
-从 [Releases](https://github.com/Shiorangerin/BiliVideo/releases) 下载 `bilivideo-x86_64-pc-windows-msvc.zip`，解压得到 `bvideo.exe`，放入任意 `PATH` 目录（推荐放进 `%USERPROFILE%\.cargo\bin` 或自建目录后加入环境变量）。
+从 [Releases](https://github.com/Alamanes/BiliVideo/releases) 下载 `bilivideo-x86_64-pc-windows-msvc.zip`，解压得到 `bvideo.exe`，放入任意 `PATH` 目录（推荐放进 `%USERPROFILE%\.cargo\bin` 或自建目录后加入环境变量）。
 
 需系统装有 `ffmpeg`：
 
@@ -37,7 +37,7 @@ scoop install ffmpeg
 需要 **Rust 1.70+** 与系统级 **ffmpeg**。
 
 ```sh
-git clone https://github.com/Shiorangerin/BiliVideo.git
+git clone https://github.com/Alamanes/BiliVideo.git
 cd BiliVideo
 cargo build --release
 # 产物：./target/release/bvideo
@@ -134,7 +134,7 @@ bvideo ./list.txt
 
 ## 实现说明
 
-- B站逻辑移植自 [BiliMusic](https://github.com/Shiorangerin/BiliMusic)（`bili-rust`）：buvid3/b_nut 风控 cookie、view API、playurl WBI 签名（fnval=4048）、最高码率选流、文件名清洗。
+- B站逻辑移植自 [BiliMusic](https://github.com/Alamanes/BiliMusic)（`bili-rust`）：buvid3/b_nut 风控 cookie、view API、playurl WBI 签名（fnval=4048）、最高码率选流、文件名清洗。
 - 进度条使用 [indicatif](https://github.com/console-rs/indicatif)：直链/B站下载显示百分比、已下载/总大小、速度、ETA；未知大小时显示 spinner。
 - HLS AES-128 解密使用 `aes` + `cbc` crate（PKCS7 填充，失败退回无填充）；IV 缺省取分片序号的大端 16 字节（RFC 8216）。
 - 代码模块：`main`(路由) / `cli` / `bili` / `wbi` / `sniff` / `hls` / `download` / `ffmpeg` / `util`。
